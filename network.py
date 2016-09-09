@@ -6,6 +6,7 @@ neural network. Gradients are calculated using backpropagation.
 #### Libraries
 # Standard library
 import random
+import time
 
 # Third-party libraries
 import numpy as np
@@ -58,6 +59,9 @@ class Network:
         n = len(training_data)
         for j in xrange(epochs):
 
+            # measure time
+            start = time.time()
+
             # shuffle training data
             random.shuffle(training_data)
 
@@ -69,11 +73,15 @@ class Network:
             for mini_batch in mini_batches:
                 # applying single step of gradient descent
                 self.update_mini_batch(mini_batch, eta)
+
+            # measure time
+            end = time.time()
+
             if test_data:
-                print "Epoch {0}: {1} / {2}".format(
-                    j, self.evaluate(test_data), n_test)
+                print "Epoch {0}: {1} / {2} ({3})".format(
+                    j, self.evaluate(test_data), n_test, (end - start))
             else:
-                print "Epoch {0} complete".format(j)
+                print "Epoch {0} complete ({1})".format(j, (end - start))
 
     def update_mini_batch(self, mini_batch, eta):
         """Update the network's weights and biases by applying
