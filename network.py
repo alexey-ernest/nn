@@ -1,5 +1,5 @@
 """
-Sochastic gradient descent learning algorithm for a feedforward
+Stochastic gradient descent learning algorithm for a feedforward
 neural network. Gradients are calculated using backpropagation.
 """
 
