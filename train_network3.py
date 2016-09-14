@@ -1,4 +1,4 @@
-import timeit
+import time
 
 import network3
 from network3 import Network
@@ -8,7 +8,7 @@ from network3 import ConvPoolLayer, FullyConnectedLayer, SoftmaxLayer
 training_data, validation_data, test_data = network3.load_data_shared()
 
 # train
-start = timeit.timeit()
+start = time.time()
 mini_batch_size = 10
 
 # Shallow network with 1 hidden layer of 100 sigmoid neurons, 60 epochs,
@@ -41,7 +41,7 @@ mini_batch_size = 10
 
 
 # Two conv layers with 20 feature maps and 40 feature maps
-# ~99%
+# ~98.99% epcho 43
 net = Network([
             ConvPoolLayer(image_shape=(mini_batch_size, 1, 28, 28),
                           filter_shape=(20, 1, 5, 5),
@@ -56,4 +56,4 @@ net = Network([
 net.SGD(training_data, 60, mini_batch_size, 0.1,
         validation_data, test_data)
 
-print('Learning time {0}'.format(timeit.timeit() - start))
+print('Learning time {0}'.format(time.time() - start))
