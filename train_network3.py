@@ -77,9 +77,11 @@ mini_batch_size = 10
 #         validation_data, test_data, lmbda=0.1)
 
 
+
+expanded_training_data, _, _ = network3.load_data_shared("./data/mnist_expanded.pkl.gz")
+
 # Expanded training data: 50,000 x 5 = 250K
-# ~99.16% (2 hours)
-# expanded_training_data, _, _ = network3.load_data_shared("./data/mnist_expanded.pkl.gz")
+# ~99.37%
 # net = Network([
 #             ConvPoolLayer(image_shape=(mini_batch_size, 1, 28, 28),
 #                           filter_shape=(20, 1, 5, 5),
@@ -93,13 +95,32 @@ mini_batch_size = 10
 #             SoftmaxLayer(n_in=100, n_out=10)
 #         ],
 #         mini_batch_size)
-# net.SGD(training_data, 60, mini_batch_size, 0.03,
+# net.SGD(expanded_training_data, 60, mini_batch_size, 0.03,
 #         validation_data, test_data, lmbda=0.1)
 
 
 # Extra fully connected layer
+# ~99.11%
+# net = Network([
+#             ConvPoolLayer(image_shape=(mini_batch_size, 1, 28, 28),
+#                           filter_shape=(20, 1, 5, 5),
+#                           poolsize=(2, 2),
+#                           activation_fn=ReLU),
+#             ConvPoolLayer(image_shape=(mini_batch_size, 20, 12, 12),
+#                           filter_shape=(40, 20, 5, 5),
+#                           poolsize=(2, 2),
+#                           activation_fn=ReLU),
+#             FullyConnectedLayer(n_in=40*4*4, n_out=100, activation_fn=ReLU),
+#             FullyConnectedLayer(n_in=100, n_out=100, activation_fn=ReLU),
+#             SoftmaxLayer(n_in=100, n_out=10)
+#         ],
+#         mini_batch_size)
+# net.SGD(training_data, 60, mini_batch_size, 0.03,
+#         validation_data, test_data, lmbda=0.1)
+
+
+# Dropout regularization
 #
-#expanded_training_data, _, _ = network3.load_data_shared("./data/mnist_expanded.pkl.gz")
 net = Network([
             ConvPoolLayer(image_shape=(mini_batch_size, 1, 28, 28),
                           filter_shape=(20, 1, 5, 5),
@@ -109,13 +130,12 @@ net = Network([
                           filter_shape=(40, 20, 5, 5),
                           poolsize=(2, 2),
                           activation_fn=ReLU),
-            FullyConnectedLayer(n_in=40*4*4, n_out=100, activation_fn=ReLU),
-            FullyConnectedLayer(n_in=100, n_out=100, activation_fn=ReLU),
-            SoftmaxLayer(n_in=100, n_out=10)
+            FullyConnectedLayer(n_in=40*4*4, n_out=1000, activation_fn=ReLU, p_dropout=0.5),
+            FullyConnectedLayer(n_in=1000, n_out=1000, activation_fn=ReLU, p_dropout=0.5),
+            SoftmaxLayer(n_in=1000, n_out=10, p_dropout=0.5)
         ],
         mini_batch_size)
-net.SGD(training_data, 60, mini_batch_size, 0.03,
-        validation_data, test_data, lmbda=0.1)
-
+net.SGD(expanded_training_data, 40, mini_batch_size, 0.03,
+        validation_data, test_data)
 
 print('Learning time {0}'.format(timer() - start))
