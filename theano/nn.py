@@ -68,10 +68,10 @@ X = np.vstack([np.random.randn(N)*covariances[0, y] + means[0, y],
 y = y.astype(theano.config.floatX)
 
 # Plot the data
-plt.figure(figsize=(8, 8))
-plt.scatter(X[0, :], X[1, :], c=y, lw=.3, s=3, cmap=plt.cm.cool)
-plt.axis([-6, 6, -6, 6])
-plt.show()
+# plt.figure(figsize=(8, 8))
+# plt.scatter(X[0, :], X[1, :], c=y, lw=.3, s=3, cmap=plt.cm.cool)
+# plt.axis([-6, 6, -6, 6])
+# plt.show()
 
 
 

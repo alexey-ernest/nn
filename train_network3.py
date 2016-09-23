@@ -81,7 +81,7 @@ mini_batch_size = 10
 expanded_training_data, _, _ = network3.load_data_shared("./data/mnist_expanded.pkl.gz")
 
 # Expanded training data: 50,000 x 5 = 250K
-# ~99.39%
+# ~99.39% (9hrs on CPU)
 # net = Network([
 #             ConvPoolLayer(image_shape=(mini_batch_size, 1, 28, 28),
 #                           filter_shape=(20, 1, 5, 5),
