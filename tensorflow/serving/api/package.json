@@ -1,0 +1,14 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "HTTP API for Tensorflow Serving",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alexey Melnikov",
+  "license": "MIT",
+  "dependencies": {
+    "tmp": "0.0.29"
+  }
+}
