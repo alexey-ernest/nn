@@ -3,6 +3,7 @@ var fs = require('fs');
 var tmp = require('tmp');
 var debug = require('debug')('scrt');
 var exec = require('child_process').exec;
+var Busboy = require('busboy');
 
 var SCRIPT_COMMAND = process.env.SCRIPT_COMMAND || '';
 
@@ -25,30 +26,33 @@ var server = http.createServer(function (req, res) {
     return res.end();
   }
 
-  // creating tmp file name
-  tmp.file(function(err, path) {
-    if (err) return handleError(err, res);
+  var files = [];
 
-    // uploading file
-    debug('Uploading file to ' + path);
+  var busboy = new Busboy({ headers: req.headers });
+  busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+    // create temp file
+    tmp.file(function(err, path) {
+      if (err) return handleError(err, res);
 
-    var tmpStream = fs.createWriteStream(path);
-    req.on('error', function (err) {
-      handleError(err, res);
+      files.push(path);
+
+      // upload file
+      debug('Uploading file ' + filename + ' to ' + path);
+      file.pipe(fs.createWriteStream(path));
     });
-    req.on('end', function () {
-      var cmd = SCRIPT_COMMAND.replace('$image', path);
-      debug('Executing script: ' + cmd);
-      execScript(cmd, function (err, stdout) {
-        if (err) return handleError(err, res);
-
-        debug('Result of script execution: ' + stdout);
-        res.end(stdout);
-      });
-    });
-
-    req.pipe(tmpStream);
   });
+  busboy.on('finish', function() {
+    var path = files[0];
+    var cmd = SCRIPT_COMMAND.replace('$image', path);
+    debug('Executing script: ' + cmd);
+    execScript(cmd, function (err, stdout) {
+      if (err) return handleError(err, res);
+
+      debug('Result of script execution: ' + stdout);
+      res.end(stdout);
+    });
+  });
+  return req.pipe(busboy);
 });
 
 server.listen(8080, function () {
