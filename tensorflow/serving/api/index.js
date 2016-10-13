@@ -30,9 +30,18 @@ var server = http.createServer(function (req, res) {
 
   var busboy = new Busboy({ headers: req.headers });
   busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+    if (mimetype !== 'image/jpeg') {
+      res.statusCode = 415;
+      file.resume();
+      return;
+    }
+
     // create temp file
     tmp.file(function(err, path) {
-      if (err) return handleError(err, res);
+      if (err) {
+        handleError(err, res);
+        file.resume();
+      }
 
       files.push(path);
 
@@ -42,6 +51,11 @@ var server = http.createServer(function (req, res) {
     });
   });
   busboy.on('finish', function() {
+    if (files.length === 0) {
+      res.statusCode = 400;
+      return res.end('0 JPEGs were uploaded.');
+    }
+
     var path = files[0];
     var cmd = SCRIPT_COMMAND.replace('$image', path);
     debug('Executing script: ' + cmd);
