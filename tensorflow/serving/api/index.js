@@ -15,7 +15,7 @@ function execScript(cmd, cb) {
 
 function handleError(err, res) {
   res.statusCode = 500;
-  res.end('Internal Server Error');
+  res.end('Internal Server Error:' + err);
 }
 
 var server = http.createServer(function (req, res) {
